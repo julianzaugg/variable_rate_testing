@@ -116,6 +116,6 @@ if __name__ == "__main__":
     myargs = ["-id", "fastml_variable",
         "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20",
               '-g']
-    args = parser.parse_args(myargs)
-    # args = parser.parse_args()
+    # args = parser.parse_args(myargs)
+    args = parser.parse_args()
     _process_arguments(parser, args)
