@@ -1,7 +1,5 @@
 """
 Given an input data directory and input parameters, this script will run GRASP.
-Requires GRASP.jar available in same directory as this script.
-
 """
 
 import sys
