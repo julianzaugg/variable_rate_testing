@@ -72,7 +72,8 @@ def _process_arguments(myparser, myargs):
                         matched_freqs_dict = dict(zip(keys, frequency))
                         marginal_seq_content.append(max(matched_freqs_dict, key=lambda key: matched_freqs_dict[key]))
                     marginal_seq = Sequence(name ="N0", sequence = ''.join(marginal_seq_content))
-                    writeFastaFile(os.path.join(results_path_abs_str, "grasp_marginal_root.fasta"), [marginal_seq])
+                    writeFastaFile(os.path.join(results_path_abs_str,
+                                                "grasp_marginal_root_reconstruction.fasta"), [marginal_seq])
             else:
                 subprocess.call("java -jar {} {} {} {} {}".format(str(grasp_jar_path),
                                                          input_tree_filename,
@@ -80,6 +81,12 @@ def _process_arguments(myparser, myargs):
                                                          "Joint",
                                                          "grasp_joint"), shell=True)
                 total_time = time.time() - start_time
+                joint_seqs = readFastaFile(os.path.join(results_path_abs_str, "grasp_joint_aln_full.fa"))
+                for s in joint_seqs:
+                    if s.name == "N0":
+                        writeFastaFile(os.path.join(results_path_abs_str, "grasp_joint_root_reconstruction.fasta"),
+                                       [s])
+                        break
 
         except Exception as e:
             print(e)

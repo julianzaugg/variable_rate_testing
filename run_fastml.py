@@ -69,11 +69,27 @@ def _process_arguments(myparser, myargs):
                          Path(os.path.join(results_path_abs_str, "marginal_probs.txt")).absolute(), # -e
                          Path(os.path.join(results_path_abs_str, "joint_probs.txt")).absolute()  # -d
                          )
+
             if myargs.gamma:
                 subprocess.call(base_command_str + " -g", shell=True)
             else:
                 subprocess.call(base_command_str, shell=True)
             total_time = time.time() - start_time
+
+            # Pull out just the root
+            joint_seqs = readFastaFile(os.path.join(results_path_abs_str, "fastml_joint_seqs.fasta"))
+            marginal_seqs = readFastaFile(os.path.join(results_path_abs_str, "fastml_marginal_seqs.fasta"))
+            for s in joint_seqs:
+                if s.name == "N1":
+                    writeFastaFile(os.path.join(results_path_abs_str, "fastml_joint_root_reconstruction.fasta"),
+                                   [s])
+                    break
+            for s in marginal_seqs:
+                if s.name == "N1":
+                    writeFastaFile(os.path.join(results_path_abs_str, "fastml_marginal_root_reconstruction.fasta"),
+                                   [s])
+                    break
+
             # FastML generates its own log file. Rename it to make way for our log file.
             os.rename(os.path.join(results_path_abs_str, "log.txt"),
                       os.path.join(results_path_abs_str, "fastml_log.txt"))
