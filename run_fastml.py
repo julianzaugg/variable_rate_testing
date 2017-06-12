@@ -80,6 +80,9 @@ def _process_arguments(myparser, myargs):
             # FastML generates its own log file. Rename it to make way for our log file.
             os.rename(os.path.join(results_path_abs_str, "log.txt"),
                       os.path.join(results_path_abs_str, "fastml_log.txt"))
+            # Remove the marginal probs file. Individually they are not large, but if analysing many groups across
+            # multiple repeats, this can add up.
+            os.remove(os.path.join(results_path_abs_str, "marginal_probs.txt"))
 
         except Exception as e:
             print(e)
@@ -113,9 +116,9 @@ if __name__ == "__main__":
 
     myargs = ["-id", "fastml_fixed",
         "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20"]
-    myargs = ["-id", "fastml_variable",
-        "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20",
-              '-g']
+    # myargs = ["-id", "fastml_variable",
+        # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20",
+              # '-g']
     # args = parser.parse_args(myargs)
     args = parser.parse_args()
     _process_arguments(parser, args)
