@@ -49,9 +49,6 @@ def _process_arguments(myparser, myargs):
             os.chdir(str(results_path.absolute()))
             start_time = time.time()
             print("Running FastML on " + results_path_abs_str)
-            print(input_sequence_filename)
-            print(input_tree_filename)
-            print(Path(os.path.join(results_path_abs_str, "fastml_reconstruction_tree.newick")).absolute())
             # cwd = os.getcwd()
             base_command_str = "fastml -mj " \
             "-s {} " \
@@ -88,7 +85,6 @@ def _process_arguments(myparser, myargs):
             print(e)
             pass
 
-
         # Write log file for the run, i.e time to run program
         with open(os.path.join(results_path_abs_str, "log.txt"), 'w') as fh:
             print("Time to run : {} seconds".format(str(round(total_time, 3))), file = fh)
@@ -100,25 +96,23 @@ def _process_arguments(myparser, myargs):
 
 
 if __name__ == "__main__":
-    #FASTML_joint_fixed, FASTML_marginal_fixed, FASTML_joint_variable, FASTML_marginal_variable
-
     parser = argparse.ArgumentParser(description='Run FastML to evaluate variable rates')
     parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder.', default = "FastML")
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
-    parser.add_argument('-g', '--gamma', help='Apply site rate variation model.', action = 'store_true')
+    parser.add_argument('-g', '--gamma', help='Apply site rate variation gamma model.', action = 'store_true')
 
     myargs = ["-id", "fastml_fixed",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_20"]
+              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40"]
 
-    myargs = ["-id", "fastml_variable",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40",
-              "-g"]
-
-    myargs = ["-id", "fastml_fixed",
-        "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20"]
     # myargs = ["-id", "fastml_variable",
-        # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20",
-              # '-g']
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40",
+    #           "-g"]
+
+    myargs = ["-id", "fastml_fixed",
+        "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_40"]
+    # myargs = ["-id", "fastml_variable",
+    #     "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_40",
+    #           '-g']
     # args = parser.parse_args(myargs)
     args = parser.parse_args()
     _process_arguments(parser, args)

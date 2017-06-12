@@ -175,6 +175,7 @@ def _process_arguments(myparser, myargs):
     base_tree = Phylo.read(myargs.tree, "newick")
     for node in base_tree.get_terminals():
         node.name = new_names[node.name]
+        node.confidence = None
     for node in base_tree.get_nonterminals():
         node.name = ''
         node.confidence = None
@@ -216,7 +217,10 @@ def _process_arguments(myparser, myargs):
             with open(os.path.join(str(group_path.absolute()), "{}_gs_{}_r_{}_g_{}.newick".format(myargs.id, myargs.groups,
                                                                                repeat+1,
                                                                                group_cnt)),'w') as fh:
-                print(copy_tree.format("newick"), file = fh)
+                # print(copy_tree.format("newick"), file = fh)
+                # Biopython attaches a branch length of 0.0000 to the end of the newick string.
+                # This needs to be removed so GRASP can read the newick string
+                print(':'.join(copy_tree.format('newick').split(":")[:-1]) + ";", file=fh)
 
             # Write subset sequences as fasta file
             subset_seq_filename = os.path.join(str(group_path.absolute()), "{}_gs_{}_r_{}_g_{}.fasta".format(myargs.id,
@@ -268,15 +272,9 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', help='Output directory', required=True)
     parser.add_argument('-r', '--repeats', help='Number of repeats to perform', type=int, default=1)
     parser.add_argument('-g', '--groups', help='Number of groups to randomly separate sequences into',
-                        type=int, default=3)
+                        type=int, default=10)
     parser.add_argument('-id', '--id', help='ID tag for data', required=True)
 
-    myargs = ["-s","../../Data/test_CYP/test_cyp2_seqs.txt",
-            "-t", "../../Data/test_CYP/test_cyp2_tree.txt",
-            "-o", "../../Data/test_CYP/test_out/",
-            "-r", "1",
-            "-g", "3",
-            "-id", "CYP"]
 
     myargs = ["-s","../../Data/CYP2/CYP2_input.fa",
             "-t", "../../Data/CYP2/CYP2_input.nwk",
@@ -289,8 +287,8 @@ if __name__ == "__main__":
     myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
             "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
             "-o", "../../Data/test_KARI/test_out/",
-            "-r", "2",
-            "-g", "10",
+            "-r", "1",
+            "-g", "40",
             "-id", "KARI"]
 
     # args = parser.parse_args(myargs)

@@ -140,6 +140,7 @@ def _process_arguments(myparser, myargs):
         # Change directory back to initial directory. This `should' address issues with
         # user providing relative file paths as input parameters.
         os.chdir(str(init_dir))
+        # sys.exit()
 
 
 if __name__ == "__main__":
