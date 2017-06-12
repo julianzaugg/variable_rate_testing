@@ -179,9 +179,10 @@ def _process_arguments(myparser, myargs):
         node.name = ''
 
     # Make results directory for current group size
-    # group_size_path = Path(os.path.join(myargs.output, "vrt_input_data", myargs.id, "group_size_" + str(myargs.groups)))
     group_size_path = Path(os.path.join(myargs.output, myargs.id, "group_size_" + str(myargs.groups)))
     group_size_path.mkdir(parents = True, exist_ok=True)
+
+    cleaned_seqs, gappy_columns = _clean_aligned_seqs(base_seqs) # **** Comment out to not clean base seqs
 
 
     # For each repeat
@@ -191,17 +192,17 @@ def _process_arguments(myparser, myargs):
         repeat_path.mkdir(parents = True, exist_ok=True)
 
         # Subset sequences
-        seqs_copy = copy.deepcopy(base_seqs)
+        # seqs_copy = copy.deepcopy(base_seqs) # **** replace line below with this to clean each subset
+        seqs_copy = copy.deepcopy(cleaned_seqs)
         seq_subsets = _partition(seqs_copy, myargs.groups)
 
         # Generate the input sequences and tree for each subset. Write to file.
         group_cnt = 1
         for sb in seq_subsets:
             # Identify and purge gappy columns from the subset of aligned sequences
-            cleaned_seqs, gappy_columns = _clean_aligned_seqs(sb)
+            # cleaned_seqs, gappy_columns = _clean_aligned_seqs(sb)
             group_path = Path(os.path.join(str(repeat_path.absolute()), "group_" + str(group_cnt)))
             group_path.mkdir(parents=True, exist_ok=True)
-            # sys.exit()
             # Copy the original tree
             copy_tree = copy.deepcopy(base_tree)
             sb_names = [s.name for s in sb] # names of sequences in subset
@@ -221,11 +222,10 @@ def _process_arguments(myparser, myargs):
                                                                                              myargs.groups,
                                                                                              repeat+1,
                                                                                              group_cnt))
-            writeFastaFile(subset_seq_filename, cleaned_seqs)
+            # writeFastaFile(subset_seq_filename, cleaned_seqs) # **** replace line below with this to used cleaned subset
+            writeFastaFile(subset_seq_filename, sb)
 
             # Convert fasta file to phylip-sequential format
-
-
             subset_seq_corrected_filename = os.path.join(str(group_path.absolute()), "{}_gs_{}_r_{}_g_{}.phylip".format(myargs.id,
                                                                                                         myargs.groups,
                                                                                                         repeat+1,
@@ -251,13 +251,11 @@ def _process_arguments(myparser, myargs):
 
                 print("gappy columns: " + " ".join(map(str, gappy_columns)), file = fh)
                 print("Nseqs: " + str(len(sb)), file = fh)
-                print("Alignlen_with_gaps: " + str(len(sb[0])), file=fh)
+                print("Alignlen_with_gaps: " + str(len(base_seqs[0])), file=fh)
                 print("Alignlen_without_gaps: " + str(len(cleaned_seqs[0])), file=fh)
 
 
             group_cnt += 1
-    # paml_variable_template.ctl
-    # paml_joint_template.ctl
 
 
 
@@ -282,17 +280,17 @@ if __name__ == "__main__":
     myargs = ["-s","../../Data/CYP2/CYP2_input.fa",
             "-t", "../../Data/CYP2/CYP2_input.nwk",
             "-o", "../../Data/test_CYP/test_out/",
-            "-r", "2",
-            "-g", "10",
+            "-r", "1",
+            "-g", "20",
             "-id", "CYP"]
 
 
-    myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
-            "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
-            "-o", "../../Data/test_KARI/test_out/",
-            "-r", "2",
-            "-g", "40",
-            "-id", "KARI"]
+    # myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
+    #         "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
+    #         "-o", "../../Data/test_KARI/test_out/",
+    #         "-r", "2",
+    #         "-g", "40",
+    #         "-id", "KARI"]
 
     # args = parser.parse_args(myargs)
     args = parser.parse_args()

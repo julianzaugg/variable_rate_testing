@@ -2,18 +2,9 @@
 Given an input data directory and a template control file (.ctl), this script will run PAML.
 Requires PAML installed to path, i.e., codeml.
 
+This can done with brew:
+ brew install homebrew/science/paml
 
-output
-    groupsize
-        repeat
-            group
-                PAML
-                    marginal
-                        variable_rates
-                            logfile
-                        not_variable_rates
-                            logfile
-                            ancestor sequences
 """
 
 
@@ -35,7 +26,6 @@ def _process_arguments(myparser, myargs):
     for dir in glob.glob(os.path.join(myargs.input, "**"), recursive=True):
         if os.path.isdir(dir):
             base_name = os.path.basename(os.path.normpath(dir))
-            # print(base_name)
             if base_name.startswith(("group")) and "size" not in base_name:
                 analysis_dirs.append(dir)
 
@@ -77,29 +67,37 @@ def _process_arguments(myparser, myargs):
         with open(edited_control_filename, 'w') as fh:
             print("\n".join(new_lines), file = fh)
 
-        # Run PAML
         try:
             start_time = time.time()
+            # Run PAML
             print("Running PAML on " + edited_control_filename)
             echo_str = "echo %s | " %  edited_control_filename
+            # Change the current working directory to the results location. This is necessary as PAML generates
+            # files wherever it is run from. If running multiple jobs with this script, generated files would
+            # be overwritten if we generated them at the directory location of this script.
+            os.chdir(str(results_path.absolute()))
+            # cwd = os.getcwd()
             subprocess.call("{}codeml".format(echo_str), shell=True,  stdout=subprocess.PIPE)
+
             end_time = time.time()
             total_time = end_time - start_time
+            # sys.exit()
 
-            # Move the results to the results folder
-            print("Moving results to " + str(results_path))
-            shutil.move("mlc", os.path.join(str(results_path.absolute()), "mlc"))
-            shutil.move("rst", os.path.join(str(results_path.absolute()), "rst"))
-            shutil.move("rst1", os.path.join(str(results_path.absolute()), "rst1"))
-            shutil.move("lnf", os.path.join(str(results_path.absolute()), "lnf"))
-            shutil.move("rub", os.path.join(str(results_path.absolute()), "rub"))
+            # Move the results to the results folder # TODO : Remove. Legacy.
+            # print("Moving results to " + str(results_path))
+            # shutil.move("mlc", os.path.join(str(results_path.absolute()), "mlc"))
+            # shutil.move("rst", os.path.join(str(results_path.absolute()), "rst"))
+            # shutil.move("rst1", os.path.join(str(results_path.absolute()), "rst1"))
+            # shutil.move("lnf", os.path.join(str(results_path.absolute()), "lnf"))
+            # shutil.move("rub", os.path.join(str(results_path.absolute()), "rub"))
 
             # Load the rst file and pull out the marginal and, if applicable, joint reconstruction for the root node
             # and write to a new separate file.
             # The internal nodes are lines starting with `node', followed by #N where N is the node number. The lowest
             # is the root node. The first one encountered in the file will be marginal and the second the joint.
 
-            rst_filename = os.path.join(str(results_path.absolute()), "rst") # Joint and marginal reconstructions are found here
+            # Joint and marginal reconstructions are found here
+            rst_filename = os.path.join(str(results_path.absolute()), "rst")
             marginal_reconstructions = []
             joint_reconstructions = []
             names_seen = set()
@@ -134,9 +132,10 @@ def _process_arguments(myparser, myargs):
                            [root_joint_reconstruction])
             writeFastaFile(os.path.join(str(results_path.absolute()), "joint_reconstructions.txt"), joint_reconstructions)
 
-            shutil.move("rates", os.path.join(str(results_path.absolute()), "rates"))
-        # except Exception as e:
-        except:
+            # TODO : Remove. Legacy.
+            # shutil.move("rates", os.path.join(str(results_path.absolute()), "rates"))
+        except Exception as e:
+            print(e)
             pass
 
         # Write log file for the run, i.e time to run program
@@ -154,20 +153,20 @@ if __name__ == "__main__":
                                                 'sequence and tree entries are changed.', required=True)
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
 
-    # myargs = ["-id", "paml_marginal_joint_fixed",
-    #           "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
-    #           "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
-    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/vrt_input_data/CYP/group_size_3"]
+    myargs = ["-id", "paml_marginal_joint_fixed",
+              "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
+              "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
+              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_20"]
 
     # myargs = ["-id", "paml_marginal_variable",
     #           "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
     #           "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_variable_codeml_ctl.txt",
-    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/vrt_input_data/CYP/group_size_3"]
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_3"]
 
     # myargs = ["-id", "paml_marginal_joint_fixed",
               # "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
               # "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
-              # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/vrt_input_data/KARI/group_size_10"]
+              # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_10"]
 
     # args = parser.parse_args(myargs)
     args = parser.parse_args()
