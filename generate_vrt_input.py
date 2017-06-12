@@ -177,6 +177,7 @@ def _process_arguments(myparser, myargs):
         node.name = new_names[node.name]
     for node in base_tree.get_nonterminals():
         node.name = ''
+        node.confidence = None
 
     # Make results directory for current group size
     group_size_path = Path(os.path.join(myargs.output, myargs.id, "group_size_" + str(myargs.groups)))
@@ -285,12 +286,12 @@ if __name__ == "__main__":
             "-id", "CYP"]
 
 
-    # myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
-    #         "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
-    #         "-o", "../../Data/test_KARI/test_out/",
-    #         "-r", "2",
-    #         "-g", "40",
-    #         "-id", "KARI"]
+    myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
+            "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
+            "-o", "../../Data/test_KARI/test_out/",
+            "-r", "2",
+            "-g", "10",
+            "-id", "KARI"]
 
     # args = parser.parse_args(myargs)
     args = parser.parse_args()

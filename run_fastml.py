@@ -4,19 +4,11 @@ Requires FastML installed to path, i.e., fastml.
 
 This can done with brew:
  brew install homebrew/science/fastml
-
--qf = FASTA
-
--g Assume among site rate variation model (Gamma) [By default the program   |
- |   will assume an homogenous model. very fast, but less accurate!]
-    > -g and no -g
-
-
-"fastml -s %s -t %s -g -qf" %(alignment[i], tree[i])
-"fastml -s %s -t %s -qf" %(alignment[i], tree[i])
 """
 
-import sys, os, argparse
+import sys
+import os
+import argparse
 import subprocess
 from pathlib import Path
 import glob
@@ -54,27 +46,53 @@ def _process_arguments(myparser, myargs):
         input_sequence_filename = Path(glob.glob(ad + "/*.fasta")[0]).absolute()
         input_tree_filename = Path([fn for fn in glob.glob(ad + "/*.newick") if "_phylip" not in fn][0]).absolute()
         try:
+            os.chdir(str(results_path.absolute()))
             start_time = time.time()
-            print("Running FastML on " + edited_control_filename)
-            # echo_str = "echo %s | " %  edited_control_filename
-
+            print("Running FastML on " + results_path_abs_str)
+            print(input_sequence_filename)
+            print(input_tree_filename)
+            print(Path(os.path.join(results_path_abs_str, "fastml_reconstruction_tree.newick")).absolute())
             # cwd = os.getcwd()
             base_command_str = "fastml -mj " \
-            "-s ../CYP_gs_40_r_1_g_1.fasta " \
-            "-t ../CYP_gs_40_r_1_g_1.newick " \
-            "-x ./temp_tree_newick.txt  " \
-            "-j ./joint_seqs.txt " \
-            "-k ./marginal_seqs.txt " \
-            "-qf"
-            if myargs.gamma
+            "-s {} " \
+            "-t {} " \
+            "-x {} " \
+            "-j {} " \
+            "-k {} " \
+            "-y {} " \
+            "-e {} " \
+            "-d {} " \
+            "-qf".format(input_sequence_filename, # -s
+                         input_tree_filename, # -t
+                         Path(os.path.join(results_path_abs_str, "fastml_reconstruction_tree.newick")).absolute(), # -x
+                         Path(os.path.join(results_path_abs_str, "fastml_joint_seqs.fasta")).absolute(), # -j
+                         Path(os.path.join(results_path_abs_str, "fastml_marginal_seqs.fasta")).absolute(), # k
+                         Path(os.path.join(results_path_abs_str,
+                                           "fastml_reconstruction_tree_ancestor_format.txt")).absolute(), # -y
+                         Path(os.path.join(results_path_abs_str, "marginal_probs.txt")).absolute(), # -e
+                         Path(os.path.join(results_path_abs_str, "joint_probs.txt")).absolute()  # -d
+                         )
+            if myargs.gamma:
+                subprocess.call(base_command_str + " -g", shell=True)
+            else:
+                subprocess.call(base_command_str, shell=True)
+            total_time = time.time() - start_time
+            # FastML generates its own log file. Rename it to make way for our log file.
+            os.rename(os.path.join(results_path_abs_str, "log.txt"),
+                      os.path.join(results_path_abs_str, "fastml_log.txt"))
 
-            subprocess.call("fastml -mj JTT")
-            subprocess.call("{}codeml".format(echo_str), shell=True,  stdout=subprocess.PIPE)
-            end_time = time.time() - start_time
         except Exception as e:
             print(e)
             pass
-        sys.exit()
+
+
+        # Write log file for the run, i.e time to run program
+        with open(os.path.join(results_path_abs_str, "log.txt"), 'w') as fh:
+            print("Time to run : {} seconds".format(str(round(total_time, 3))), file = fh)
+        # Change directory back to initial directory. This `should' address issues with
+        # user providing relative file paths as input parameters.
+        os.chdir(str(init_dir))
+        # sys.exit()
 
 
 
@@ -82,12 +100,22 @@ if __name__ == "__main__":
     #FASTML_joint_fixed, FASTML_marginal_fixed, FASTML_joint_variable, FASTML_marginal_variable
 
     parser = argparse.ArgumentParser(description='Run FastML to evaluate variable rates')
-    parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder.', default = "PAML")
+    parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder.', default = "FastML")
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
     parser.add_argument('-g', '--gamma', help='Apply site rate variation model.', action = 'store_true')
 
-    myargs = ["-id", "fastml_marginal",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40"]
+    myargs = ["-id", "fastml_fixed",
+              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_20"]
 
+    myargs = ["-id", "fastml_variable",
+              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40",
+              "-g"]
+
+    myargs = ["-id", "fastml_fixed",
+        "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20"]
+    myargs = ["-id", "fastml_variable",
+        "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_20",
+              '-g']
     args = parser.parse_args(myargs)
+    # args = parser.parse_args()
     _process_arguments(parser, args)
