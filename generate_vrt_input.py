@@ -17,13 +17,6 @@ from Bio import SeqIO
 from sequence import *
 
 
-
-##################################################
-#For PAML we require sequences to be in phylip-sequential format (with 2 spaces between 10-letter name and
-#  sequence content)
-#The corresponding tree also needs the same 10-letter names
-
-
 def _correct_phylip_file(filename):
     """
     Take a sequence file formatted in phylip sequential format, as
