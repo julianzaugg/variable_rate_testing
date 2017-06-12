@@ -281,7 +281,7 @@ if __name__ == "__main__":
             "-t", "../../Data/CYP2/CYP2_input.nwk",
             "-o", "../../Data/test_CYP/test_out/",
             "-r", "1",
-            "-g", "20",
+            "-g", "40",
             "-id", "CYP"]
 
 
