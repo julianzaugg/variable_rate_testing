@@ -87,8 +87,6 @@ def _clean_aligned_seqs(seqs):
 def _process_arguments(myparser, myargs):
     # Load base sequences and tree
     base_seqs = readFastaFile(myargs.sequences, Protein_Alphabet, gappy=True)
-    # FIXME: truncation can lead to identical names. Fix this by assigning a random alphanumeric name and/or
-    # FIXME : storing the matching original name in a textfile. I don't think we need correct names for analysis.
 
     # Assign random names to avoid duplicate names
     new_names = dict()
