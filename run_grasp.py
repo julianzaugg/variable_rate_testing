@@ -102,7 +102,8 @@ if __name__ == "__main__":
     #GRASP_joint_fixed, GRASP_marginal_fixed
     parser = argparse.ArgumentParser(description='Run GRASP to evaluate variable rates')
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
-    parser.add_argument('-id', '--id', help='ID tag for run', default="GRASP")
+    parser.add_argument('-id', '--id', help='ID tag for run. Must include name of tool '
+                                            'and either "variable" or "fixed"', required=True)
     parser.add_argument('-grasp', help='JAR file for GRASP', required = True)
     parser.add_argument('-m', '--marginal', help='Apply marginal reconstruction', action = 'store_true')
 

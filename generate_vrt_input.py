@@ -194,7 +194,7 @@ if __name__ == "__main__":
     parser.add_argument('-r', '--repeats', help='Number of repeats to perform', type=int, default=1)
     parser.add_argument('-g', '--groups', help='Number of groups to randomly separate sequences into',
                         type=int, default=10)
-    parser.add_argument('-id', '--id', help='ID tag for data', required=True)
+    parser.add_argument('-id', '--id', help='ID tag for data.', required=True)
 
 
     myargs = ["-s","../../Data/CYP2/CYP2_input.fa",

@@ -112,8 +112,9 @@ def _process_arguments(myparser, myargs):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run FastML to evaluate variable rates')
-    parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder.', default = "FastML")
+    parser = argparse.ArgumentParser(description='Run FastML to evaluate variable rates.')
+    parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder. Must include name of tool '
+                                            'and either "variable" or "fixed"',required=True)
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
     parser.add_argument('-g', '--gamma', help='Apply site rate variation gamma model.', action = 'store_true')
 

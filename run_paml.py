@@ -23,6 +23,10 @@ def _process_arguments(myparser, myargs):
     # Collect directory paths for analysis
     analysis_dirs = []
     init_dir = Path(os.curdir).resolve().absolute()
+    if "paml" not in myargs.id.lower():
+        raise RuntimeError("Job ID must include the word 'paml'")
+    if "variable" not in myargs.id.lower() and "fixed" not in myargs.id.lower():
+        raise RuntimeError("Job ID must include the word 'fixed' or 'variable'")
 
     input_path = Path(myargs.input).resolve()
     for dir in glob.glob(os.path.join(str(input_path.absolute()), "**"), recursive=True):
@@ -147,7 +151,8 @@ if __name__ == "__main__":
     # PAML_joint_fixed, PAML_marginal_fixed, PAML_marginal_variable
 
     parser = argparse.ArgumentParser(description='Run PAML to evaluate variable rates')
-    parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder.', default = "PAML")
+    parser.add_argument('-id', '--id', help='ID tag for run. Names the result folder.  Must include name of tool '
+                                            'and either "variable" or "fixed"', required=True)
     parser.add_argument('-m', '--model', help='Location of model file (aaRatefile) for PAML', required=True)
     parser.add_argument('-c', '--control', help='Template control (.ctl) file. Only input'
                                                 'sequence and tree entries are changed.', required=True)
@@ -163,11 +168,11 @@ if __name__ == "__main__":
     #           "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_variable_codeml_ctl.txt",
     #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_3"]
 
-    # myargs = ["-id", "paml_marginal_joint_fixed",
-              # "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
-              # "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
-              # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_10"]
+    myargs = ["-id", "paml_marginal_joint_fixed",
+              "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
+              "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
+              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_10"]
 
-    # args = parser.parse_args(myargs)
-    args = parser.parse_args()
+    args = parser.parse_args(myargs)
+    # args = parser.parse_args()
     _process_arguments(parser, args)
