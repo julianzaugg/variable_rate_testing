@@ -370,7 +370,6 @@ def _process_arguments(myparser, myargs):
         shutil.move(os.path.join(str(out_dir), "outfile"), matrix_filename) # move the outfile matrix to new file
         name_order, dist_matrix, group_mean_dist, group_std_dist = _summarise_distances_from_matrix(matrix_filename)
 
-
         tool_to_tool_distances = defaultdict(lambda: defaultdict(list))
         lower_matrix = np.tril(dist_matrix) # lower half of the distance matrix
         for row in range(len(lower_matrix)):
@@ -392,6 +391,8 @@ def _process_arguments(myparser, myargs):
             for g2, v2 in v1.items():
                 splitted_g2 = g2.split("_")
                 tool2 = splitted_g2[0]
+                # Skip self comparison
+                if tool1 == tool2: continue
                 group_size2 = splitted_g2[1]
                 seq_type2 = splitted_g2[2]
                 job_type2 = splitted_g2[3]
@@ -466,6 +467,8 @@ def _process_arguments(myparser, myargs):
                 group_size2 = splitted_g2[1]
                 seq_type2 = splitted_g2[2]
                 job_type2 = splitted_g2[3]
+                # Skip self comparison
+                if tool1 == tool2 and seq_type1 == seq_type2 and job_type1 == job_type2: continue
                 group_group_mean_dist = round(np.mean(v2), 3)
                 group_group_stdev_dist = round(np.std(v2), 3)
                 group_group_dist_summary_strs.append("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}".format(
@@ -498,6 +501,6 @@ if __name__ == "__main__":
     myargs = ["-i", result_dir,
               "-o", out_dir,
               "-id", "KARI"]
-    args = parser.parse_args(myargs)
-    # args = parser.parse_args()
+    # args = parser.parse_args(myargs)
+    args = parser.parse_args()
     _process_arguments(parser, args)
