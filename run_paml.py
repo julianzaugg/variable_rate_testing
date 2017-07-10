@@ -87,7 +87,8 @@ def _process_arguments(myparser, myargs):
             # be overwritten if we generated them at the location of this script.
             os.chdir(str(results_path.absolute()))
             # cwd = os.getcwd()
-            subprocess.call("{}codeml".format(echo_str), shell=True,  stdout=subprocess.PIPE)
+            # subprocess.call("{}codeml".format(echo_str), shell=True,  stdout=subprocess.PIPE)
+            subprocess.call("{}codeml".format(echo_str), shell=True)
 
             end_time = time.time()
             total_time = end_time - start_time
@@ -173,6 +174,6 @@ if __name__ == "__main__":
               "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
               "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_10"]
 
-    args = parser.parse_args(myargs)
-    # args = parser.parse_args()
+    # args = parser.parse_args(myargs)
+    args = parser.parse_args()
     _process_arguments(parser, args)
