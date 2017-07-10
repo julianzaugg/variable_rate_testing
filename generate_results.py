@@ -256,7 +256,7 @@ def _process_arguments(myparser, myargs):
     for ar in ar_results:
         summary_results_time[ar.tool][ar.seq_type][ar.job_type][ar.group_size].append(float(ar.calculation_time))
         summary_results_seq_range[ar.tool][ar.seq_type][ar.job_type][ar.group_size].append(float(ar.number_of_seqs_used))
-    # Write the time mean and variance time differances
+    # Write the time mean and variance time differences
     with open(os.path.join(str(out_dir), myargs.id + "_asr_results_table_summary.txt"), 'w') as fh:
         print("Tool\tSeqType\tJobType\tGroupSize\tSeqRange\tTime_Mean\tTime_SD", file = fh)
         for tool, seq_type_data in summary_results_time.items():
@@ -302,6 +302,9 @@ def _process_arguments(myparser, myargs):
     group_dist_summary_strs = []
     for ar_g, ar_g_members in ar_groups:
         ar_g_member_seqs = [member.seq_object for member in ar_g_members]
+        # There should only be 1 sequence if the group size is 1, in that case don't write the result
+        # since it will be NaN
+        if len(ar_g_member_seqs) == 1: continue
         # Write out the phylip formatted input file for each group
         group_filename = os.path.join(str(out_dir), myargs.id + "_" + "_".join(ar_g) + ".phylip")
         try:
@@ -334,7 +337,6 @@ def _process_arguments(myparser, myargs):
         for out_str in group_dist_summary_strs:
             print(out_str, file=fh)
 
-
     ########################################
     """
     Below, groups contain results for mixtures of tools. We need to know mean distances between sequences from 
@@ -352,6 +354,9 @@ def _process_arguments(myparser, myargs):
     for ar_g, ar_g_members in ar_groups:
         ar_g_member_objects = [member for member in ar_g_members]
         ar_g_member_seqs = [member.seq_object for member in ar_g_member_objects]
+        # There should only be 1 sequence if the group size is 1 and no other tool has a result in this size.
+        # In that case don't try generating the result since there won't be anything to compare to
+        if len(ar_g_member_seqs) == 1: continue
         # Map sequence names to tool_groupsize_seqtype_jobtype
         mapped_seq_ar = dict(zip(map(lambda x: x.name, ar_g_member_seqs),
                                  map(lambda x: "_".join([x.tool,x.group_size,x.seq_type,x.job_type]), ar_g_member_objects)))
@@ -420,6 +425,8 @@ def _process_arguments(myparser, myargs):
     for ar_g, ar_g_members in ar_groups:
         ar_g_member_objects = [member for member in ar_g_members]
         ar_g_member_seqs = [member.seq_object for member in ar_g_member_objects]
+        # If only one member, there is no other sequences to compare to
+        if len(ar_g_member_seqs) == 1: continue
         # Map sequence names to tool_groupsize_seqtype_jobtype
         mapped_seq_ar = dict(zip(map(lambda x: x.name, ar_g_member_seqs),
                                  map(lambda x: "_".join([x.tool, x.group_size, x.seq_type, x.job_type]),
@@ -481,10 +488,66 @@ def _process_arguments(myparser, myargs):
               "Tool2\tGroupSize2\tSeqType2\tJobType2\tMean_distance\tStdev_distance", file=fh)
         for ggdss in group_group_dist_summary_strs:
             print(ggdss, file=fh)
+
+    ########################################
+    # Now compare all combinations of tools and methods against each other
+    # This is a INTER tools and method comparison
+    #all_dist_summary_strs = []
+    ar_member_objects = [member for member in ar_results]
+    ar_member_seqs = [member.seq_object for member in ar_member_objects]
+
+
+    # Map sequence names to ar result object
+    mapped_seq_ar = dict(zip(map(lambda x: x.name, ar_member_seqs), ar_member_objects))
+    # Write out the phylip formatted input file
+    group_filename = os.path.join(str(out_dir),
+                                  myargs.id + "_all_tool_and_method_comparison.phylip")
     try:
-        os.remove(os.path.join(str(out_dir), "infile"))
+        os.remove(os.path.join(str(out_dir), "outfile"))
     except:
         pass
+    _write_phylip_file(group_filename, ar_member_seqs)
+    _write_phylip_file(os.path.join(str(out_dir), "infile"), ar_member_seqs)  # write seqs to infile as well
+    os.chdir(str(out_dir))  # Protdist looks for infile in the current directory
+
+    # If there are too many sequences, we have to run protdist and allow stdout to dump to shell rather than
+    # subprocess.PIPE. If we dump to subprocess.PIPE, the program never finishes. This is because subprocess.PIPE
+    # has a buffer size limit and if reached, the program will hang.
+    subprocess.call("echo Y | protdist", shell=True)
+    # subprocess.call("echo Y | protdist", shell=True, stdout=subprocess.PIPE)
+    matrix_filename = group_filename.replace(".phylip", ".matrix")
+    shutil.move(os.path.join(str(out_dir), "outfile"), matrix_filename)  # move the outfile matrix to new file
+    name_order, dist_matrix, group_mean_dist, group_std_dist = _summarise_distances_from_matrix(matrix_filename)
+
+    with open(os.path.join(str(out_dir), myargs.id + "_all_combinations_distance_comparison.txt"), 'w') as fh:
+        print("S1Name\tTool1\tGroupSize1\tSeqType1\tJobType1\t" + \
+                 "S2Name\tTool2\tGroupSize2\tSeqType2\tJobType2\tDistance", file=fh)
+        #seq_to_seq_distances = defaultdict(lambda: defaultdict(list))
+        lower_matrix = np.tril(dist_matrix)  # lower half of the distance matrix
+        for row in range(len(lower_matrix)):
+            row_seq_name = name_order[row]
+            s1_ar = mapped_seq_ar[row_seq_name]
+            for col in range(len(lower_matrix[row])):
+                if lower_matrix[row][col] == 0.0: continue
+                col_seq_name = name_order[col]
+                s2_ar = mapped_seq_ar[col_seq_name]
+
+                s1_s2_distance = lower_matrix[row][col]
+
+                tool1 = s1_ar.tool
+                group_size1 = s1_ar.group_size
+                seq_type1 = s1_ar.seq_type
+                job_type1 = s1_ar.job_type
+
+                tool2 = s2_ar.tool
+                group_size2 = s2_ar.group_size
+                seq_type2 = s2_ar.seq_type
+                job_type2 = s2_ar.job_type
+
+                print("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}".format(
+                                row_seq_name, tool1, group_size1, seq_type1, job_type1,
+                                col_seq_name, tool2, group_size2, seq_type2, job_type2, s1_s2_distance
+                                ), file = fh)
 
 
 
@@ -496,11 +559,11 @@ if __name__ == "__main__":
 
     result_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/CYP2"
     out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/CYP2"
-    result_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/KARI"
-    out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/KARI"
+    # result_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/KARI"
+    # out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/KARI"
     myargs = ["-i", result_dir,
               "-o", out_dir,
-              "-id", "KARI"]
+              "-id", "CYP"]
     # args = parser.parse_args(myargs)
     args = parser.parse_args()
     _process_arguments(parser, args)
