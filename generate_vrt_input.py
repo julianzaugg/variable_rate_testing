@@ -197,20 +197,19 @@ if __name__ == "__main__":
     parser.add_argument('-id', '--id', help='ID tag for data.', required=True)
 
 
-    myargs = ["-s","../../Data/CYP2/CYP2_input.fa",
-            "-t", "../../Data/CYP2/CYP2_input.nwk",
-            "-o", "../../Data/test_CYP/test_out/",
-            "-r", "1",
-            "-g", "40",
-            "-id", "CYP"]
+    # myargs = ["-s","../../Data/CYP2/CYP2_input.fa",
+    #         "-t", "../../Data/CYP2/CYP2_input.nwk",
+    #         "-o", "../../Data/test_CYP/test_out/",
+    #         "-r", "1",
+    #         "-g", "1",
+    #         "-id", "CYP"]
 
-
-    myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
-            "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
-            "-o", "../../Data/test_KARI/test_out/",
-            "-r", "1",
-            "-g", "40",
-            "-id", "KARI"]
+    # myargs = ["-s","../../Data/KARI/KARI_EC_mafft3.fasta",
+    #         "-t", "../../Data/KARI/KARI_EC_mafft3.nwk",
+    #         "-o", "../../Data/test_KARI/test_out/",
+    #         "-r", "1",
+    #         "-g", "1",
+    #         "-id", "KARI"]
 
     # args = parser.parse_args(myargs)
     args = parser.parse_args()

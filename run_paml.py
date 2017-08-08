@@ -159,20 +159,20 @@ if __name__ == "__main__":
                                                 'sequence and tree entries are changed.', required=True)
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
 
-    myargs = ["-id", "paml_marginal_joint_fixed",
-              "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
-              "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40"]
+    # myargs = ["-id", "paml_marginal_joint_fixed",
+    #           "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
+    #           "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40"]
 
     # myargs = ["-id", "paml_marginal_variable",
     #           "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
     #           "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_variable_codeml_ctl.txt",
     #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_3"]
 
-    myargs = ["-id", "paml_marginal_joint_fixed",
-              "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
-              "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_10"]
+    # myargs = ["-id", "paml_marginal_joint_fixed",
+    #           "-m", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/jones.dat",
+    #           "-c", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/marginal_joint_fixed_codeml_ctl.txt",
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_10"]
 
     # args = parser.parse_args(myargs)
     args = parser.parse_args()

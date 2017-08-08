@@ -33,8 +33,8 @@ def _process_arguments(myparser, myargs):
                 analysis_dirs.append(dir)
 
     # Sort analysis directories so we iterate from lowest to highest group
-    analysis_dirs = sorted(analysis_dirs, key=lambda x: (int(x.split("/")[-2].split("_")[-1]),
-                                                         int(x.split("/")[-1].split("_")[-1])))
+    #analysis_dirs = sorted(analysis_dirs, key=lambda x: (int(x.split("/")[-2].split("_")[-1]),
+                                                         # int(x.split("/")[-1].split("_")[-1])))
 
     for ad in analysis_dirs:
         # Create the results directory
@@ -118,17 +118,17 @@ if __name__ == "__main__":
     parser.add_argument('-i', '--input', help='Base directory for input data.', required=True)
     parser.add_argument('-g', '--gamma', help='Apply site rate variation gamma model.', action = 'store_true')
 
-    myargs = ["-id", "fastml_fixed",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40"]
+    # myargs = ["-id", "fastml_fixed",
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40"]
 
     # myargs = ["-id", "fastml_variable",
     #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40",
     #           "-g"]
 
-    myargs = ["-id", "fastml_fixed",
-        "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_40"]
+    # myargs = ["-id", "fastml_fixed",
+        # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_40"]
     # myargs = ["-id", "fastml_variable",
-    #     "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_40",
+    #     "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/KARI/group_size_10/repeat_1/group_6",
     #           '-g']
     # args = parser.parse_args(myargs)
     args = parser.parse_args()

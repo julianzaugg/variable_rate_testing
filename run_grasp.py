@@ -107,19 +107,23 @@ if __name__ == "__main__":
     parser.add_argument('-grasp', help='JAR file for GRASP', required = True)
     parser.add_argument('-m', '--marginal', help='Apply marginal reconstruction', action = 'store_true')
 
-    myargs = ["-id", "grasp_joint",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40",
-              "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar"]
+    # myargs = ["-id", "grasp_joint",
+              # "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_1",
+              # "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar"]
 
-    myargs = ["-id", "grasp_marginal",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_40",
-              "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar",
-              "-m"]
+    # myargs = ["-id", "grasp_marginal",
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_CYP/test_out/CYP/group_size_1",
+    #           "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar",
+    #           "-m"]
 
-    myargs = ["-id", "grasp_marginal",
-              "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_40",
-              "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar",
-              "-m"]
+    # myargs = ["-id", "grasp_marginal",
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_1",
+    #           "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar",
+    #           "-m"]
+    #
+    # myargs = ["-id", "grasp_joint",
+    #           "-i", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Data/test_KARI/test_out/KARI/group_size_1",
+    #           "-grasp", "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Code/ASR.jar"]
 
     # args = parser.parse_args(myargs)
     args = parser.parse_args()

@@ -348,6 +348,7 @@ def _process_arguments(myparser, myargs):
 
     # Now group by just groupsize, seq type and job type to compare tools against each other
     # This is an INTER tool comparison
+    print("Comparing tools within group, seq type and job type")
     group_group_dist_summary_strs = []
     sorted_ar_results = sorted(ar_results, key=lambda x: (x.group_size, x.seq_type, x.job_type))
     ar_groups = groupby(sorted_ar_results, lambda x: (x.group_size, x.seq_type, x.job_type))
@@ -419,6 +420,7 @@ def _process_arguments(myparser, myargs):
     ########################################
     # Now group by just groupsize, to compare tools and methods against each other
     # This is a INTER tools and method comparison
+    print("Comparing all vs all within group size")
     group_group_dist_summary_strs = []
     sorted_ar_results = sorted(ar_results, key=lambda x: (x.group_size))
     ar_groups = groupby(sorted_ar_results, lambda x: (x.group_size))
@@ -493,6 +495,7 @@ def _process_arguments(myparser, myargs):
     # Now compare all combinations of tools and methods against each other
     # This is a INTER tools and method comparison
     #all_dist_summary_strs = []
+    print("Comparing all vs all")
     ar_member_objects = [member for member in ar_results]
     ar_member_seqs = [member.seq_object for member in ar_member_objects]
 
@@ -557,13 +560,13 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', help='Output directory for results', required=True)
     parser.add_argument('-id', help='ID tag for results', required=True)
 
-    result_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/CYP2"
-    out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/CYP2"
+    # result_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/CYP2"
+    # out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/CYP2"
     # result_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Results/KARI"
-    # out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/KARI"
-    myargs = ["-i", result_dir,
-              "-o", out_dir,
-              "-id", "CYP"]
+    # out_dir = "/Users/julianzaugg/Documents/University/Phd/Projects/GRASP/Processed_results/KARI"
+    # myargs = ["-i", result_dir,
+    #           "-o", out_dir,
+    #           "-id", "KARI"]
     # args = parser.parse_args(myargs)
     args = parser.parse_args()
     _process_arguments(parser, args)
